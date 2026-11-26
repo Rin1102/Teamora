@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+{% block title %}Ajouter une absence{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Ajouter une absence</h1></div></header>
+<section class="card form-card absence-form">
+{{ form_start(form) }}
+  {{ form_errors(form) }}
+  <h2>Informations sur l’employé</h2>
+  <div class="form-grid">{{ form_row(form.employee) }}</div>
+
+  <h2>Informations sur l’absence</h2>
+  <div class="form-grid absence-dates">
+    {{ form_row(form.type) }}
+    {{ form_row(form.startDate) }}
+    {{ form_row(form.endDate) }}
+    <div class="absence-duration">
+      <label>Durée de l’absence</label>
+      <output id="absence-duration"><strong>1 jour</strong></output>
+    </div>
+  </div>
+
+  <h2>Justification de l’absence</h2>
+  <div class="form-grid">
+    {{ form_row(form.reason) }}
+    {{ form_row(form.justified) }}
+    {{ form_row(form.document) }}
+  </div>
+
+  <h2>Informations complémentaires</h2>
+  {{ form_row(form.rhComment) }}
+
+  <div class="actions">
+    <a class="btn ghost" href="{{ path('absence_index') }}">Annuler</a>
+    <button class="btn" type="submit">Enregistrer l’absence</button>
+  </div>
+{{ form_end(form) }}
+</section>
+<script>
+(() => {
+  const form = document.querySelector('.absence-form form');
+  if (!form) return;
+  const start = form.querySelector('[name*="[startDate]"]');
+  const end = form.querySelector('[name*="[endDate]"]');
+  const output = document.getElementById('absence-duration');
+  function updateDuration() {
+    if (!start?.value || !end?.value) return;
+    const first = new Date(start.value + 'T00:00:00');
+    const last = new Date(end.value + 'T00:00:00');
+    if (last < first) {
+      output.innerHTML = '<strong class="duration-error">Dates invalides</strong>';
+      end.setCustomValidity('La date de fin ne peut pas précéder la date de début.');
+      return;
+    }
+    end.setCustomValidity('');
+    const days = Math.round((last - first) / 86400000) + 1;
+    output.innerHTML = '<strong>' + days + ' jour' + (days > 1 ? 's' : '') + '</strong>';
+  }
+  start?.addEventListener('change', updateDuration);
+  end?.addEventListener('change', updateDuration);
+  updateDuration();
+})();
+</script>
+{% endblock %}

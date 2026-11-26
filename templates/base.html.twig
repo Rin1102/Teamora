@@ -18,7 +18,8 @@
             <a href="{{ path('app_dashboard') }}" class="{{ route == 'app_dashboard' ? 'active' }}"><i class="bi bi-house"></i> Tableau de bord</a>
             <a href="{{ path('employee_index') }}" class="{{ route starts with 'employee' ? 'active' }}"><i class="bi bi-people"></i> Employés</a>
             <a href="{{ path('department_index') }}" class="{{ route starts with 'department' ? 'active' }}"><i class="bi bi-diagram-3"></i> Départements</a>
-            <a href="{{ path('leave_index') }}" class="{{ route starts with 'leave' ? 'active' }}"><i class="bi bi-calendar-check"></i> Congés et absences</a>
+            <a href="{{ path('leave_index') }}" class="{{ route starts with 'leave' ? 'active' }}"><i class="bi bi-calendar-check"></i> Gestion des congés</a>
+            <a href="{{ path('absence_index') }}" class="{{ route starts with 'absence' ? 'active' }}"><i class="bi bi-clock-history"></i> Gestion des absences</a>
             <a href="{{ path('paie_index') }}" class="{{ route starts with 'paie' ? 'active' }}"><i class="bi bi-cash-coin"></i> Salaires et primes</a>
         </nav>
         <div class="me">

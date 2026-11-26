@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des absences{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div><h1>Gestion des absences</h1></div>
+  <div class="tools">
+    <a class="btn" href="{{ path('absence_new') }}"><i class="bi bi-plus"></i> Ajouter une absence</a>
+  </div>
+</header>
+<section class="card">
+{% if absences %}
+<table>
+<thead><tr><th>Employé</th><th>Type</th><th>Période</th><th>Durée</th><th>Justifiée</th><th>Justificatif</th></tr></thead>
+<tbody>
+{% for absence in absences %}
+<tr>
+  <td><span class="who"><img src="{{ asset('img/' ~ absence.employee.avatar) }}" alt=""><b>{{ absence.employee.fullName }}</b></span></td>
+  <td>{{ absence.type }}</td>
+  <td>{{ absence.startDate|date('d/m/Y') }} – {{ absence.endDate|date('d/m/Y') }}</td>
+  <td>{{ absence.days }} jour{{ absence.days > 1 ? 's' }}</td>
+  <td><span class="badge {{ absence.justified ? 'ok' : 'bad' }}">{{ absence.justified ? 'Oui' : 'Non' }}</span></td>
+  <td>{% if absence.document %}<a href="{{ asset('uploads/absences/' ~ absence.document) }}" target="_blank"><i class="bi bi-paperclip"></i> Voir</a>{% else %}<span class="muted">Aucun</span>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<div class="empty"><p>Aucune absence enregistrée pour cette période.</p></div>
+{% endif %}
+</section>
+{% endblock %}
