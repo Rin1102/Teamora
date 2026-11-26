@@ -1,0 +1,15 @@
+{% set body %}
+{% if error %}<div class="flash error">Identifiants invalides.</div>{% endif %}
+<div class="form-container">
+<form method="post">
+    <label class="field"><i class="bi bi-envelope"></i><input type="email" name="_username" value="{{ last_username }}" placeholder="Adresse e-mail" required autofocus></label>
+    <label class="field"><i class="bi bi-lock"></i><input type="password" name="_password" id="pwd" placeholder="Mot de passe" required>
+        <i class="bi bi-eye-slash toggle" onclick="var p=document.getElementById('pwd');p.type=p.type=='password'?'text':'password'"></i></label>
+    <label class="check"><input type="checkbox" name="_remember_me"> Se souvenir de moi</label>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+    <button class="btn block" type="submit">Se connecter</button>
+</form>
+<p class="muted center">Première utilisation ? <a href="{{ path('app_register') }}">Créer le compte RH</a></p>
+</div>
+{% endset %}
+{% include 'security/_auth.html.twig' with {title: 'Connexion RH', subtitle: 'Accédez à votre espace de gestion RH', bg: 'signin_bg.png', content: body} %}

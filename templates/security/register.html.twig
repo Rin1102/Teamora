@@ -1,0 +1,21 @@
+{% set body %}
+<div class="form-container">
+{{ form_start(form, {attr: {class: 'stack'}}) }}
+    {{ form_errors(form) }}
+    <h2>Informations RH</h2>
+    {{ form_row(form.fullName) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.password.first) }}
+    {{ form_row(form.password.second) }}
+    <h2>Informations de l’entreprise</h2>
+    {{ form_row(form.companyName) }}
+    {{ form_row(form.companyAddress) }}
+    {{ form_row(form.companyCity) }}
+    {{ form_row(form.companyPhone) }}
+    {{ form_row(form.companyEmail) }}
+    <button class="btn block" type="submit">Créer mon entreprise et mon compte RH</button>
+{{ form_end(form) }}
+<p class="muted center"><a href="{{ path('app_login') }}">Déjà un compte ? Se connecter</a></p>
+</div>
+{% endset %}
+{% include 'security/_auth.html.twig' with {title: 'Inscription RH', subtitle: 'Créez votre entreprise et son compte RH', bg: 'signup_bg.png', content: body} %}

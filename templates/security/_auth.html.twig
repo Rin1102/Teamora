@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} · Teamora RH</title>
+    <link rel="icon" href="{{ asset('img/icon_portal.png') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
+<body class="auth" style="background-image:url('{{ asset('img/' ~ bg) }}')">
+    <div class="auth-card">
+        <img class="logo" src="{{ asset('img/logo.png') }}" alt="Teamora">
+        <h1>{{ title }}</h1><p class="muted">{{ subtitle }}</p>
+        {% for type, msgs in app.flashes %}{% for m in msgs %}<div class="flash {{ type }}">{{ m }}</div>{% endfor %}{% endfor %}
+        {{ content|raw }}
+    </div>
+</body>
+</html>

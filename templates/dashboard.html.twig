@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Tableau de bord</h1><p class="muted">Aperçu global de la gestion des ressources humaines</p></div>
+    <span class="date"><i class="bi bi-calendar3"></i> {{ 'now'|date('d/m/Y') }}</span></header>
+<div class="stats">
+    <div class="stat green"><img src="{{ asset('img/icon_team.png') }}" alt=""><div><b>{{ total }}</b><span>Employés</span></div></div>
+    <div class="stat blue"><img src="{{ asset('img/icon_portal.png') }}" alt=""><div><b>{{ departments }}</b><span>Départements</span></div></div>
+    <div class="stat mint"><img src="{{ asset('img/icon_calendar.png') }}" alt=""><div><b>{{ pending }}</b><span>Demandes de congé</span></div></div>
+    <div class="stat peach"><img src="{{ asset('img/icon_gift.png') }}" alt=""><div><b>{{ bonuses }}</b><span>Primes ce mois</span></div></div>
+</div>
+<div class="grid-2">
+    <section class="card"><h2>Évolution des effectifs</h2><canvas id="chart" height="120"></canvas></section>
+    <section class="card center"><h2>Congés ce mois</h2>
+        <div class="donut" style="--p:{{ percent }}"><span>{{ percent }}%</span></div>
+        <p class="muted"><b class="g">{{ onLeave }} / {{ total }}</b> employés en congé aujourd'hui</p>
+    </section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('chart'), {type:'line',
+  data:{labels:{{ labels|json_encode|raw }},datasets:[{data:{{ data|json_encode|raw }},borderColor:'#1e8e3e',backgroundColor:'rgba(30,142,62,.12)',fill:true,tension:.35,pointRadius:3}]},
+  options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+</script>
+{% endblock %}

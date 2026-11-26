@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block title %}Départements{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Départements</h1><p class="muted">{{ departments|length }} département(s)</p></div>
+<a class="btn" href="{{ path('department_new') }}"><i class="bi bi-plus"></i> Ajouter un département</a></header>
+{% if departments %}
+<div class="dept-grid">{% for d in departments %}
+<div class="card dept"><span class="emoji">{{ d.icon }}</span><b>{{ d.name }}</b><small>{{ d.employees|length }} employés</small>
+<div class="row-actions"><a href="{{ path('department_edit', {id: d.id}) }}"><i class="bi bi-pencil"></i></a>
+<form method="post" action="{{ path('department_delete', {id: d.id}) }}" onsubmit="return confirm('Supprimer ce département ?')"><input type="hidden" name="_token" value="{{ csrf_token('del' ~ d.id) }}"><button class="danger"><i class="bi bi-trash"></i></button></form></div></div>
+{% endfor %}</div>
+{% else %}<section class="card empty"><img src="{{ asset('img/ill_hr.png') }}" alt=""><p>Créez votre premier département.</p></section>{% endif %}
+{% endblock %}

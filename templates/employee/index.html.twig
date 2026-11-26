@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block title %}Employés{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Employés</h1><p class="muted">{{ employees|length }} employé(s)</p></div>
+    <div class="tools"><form class="search"><i class="bi bi-search"></i><input name="q" value="{{ q }}" placeholder="Rechercher un employé…"></form>
+    <a class="btn" href="{{ path('employee_new') }}"><i class="bi bi-plus"></i> Ajouter un employé</a></div></header>
+<section class="card">
+{% if employees %}
+<table><thead><tr><th>Employé</th><th>Poste</th><th>Département</th><th>Statut</th><th>Actions</th></tr></thead><tbody>
+{% for e in employees %}
+<tr><td><a class="who" href="{{ path('employee_show', {id: e.id}) }}"><img src="{{ asset('img/' ~ e.avatar) }}" alt=""><b>{{ e.fullName }}</b></a></td>
+<td>{{ e.position }}</td><td>{{ e.department ?? '—' }}</td>
+<td><span class="badge {{ e.status == 'Actif' ? 'ok' : 'warn' }}">{{ e.status }}</span></td>
+<td class="row-actions"><a href="{{ path('employee_show', {id: e.id}) }}"><i class="bi bi-eye"></i></a>
+<a href="{{ path('employee_edit', {id: e.id}) }}"><i class="bi bi-pencil"></i></a>
+<form method="post" action="{{ path('employee_delete', {id: e.id}) }}" onsubmit="return confirm('Supprimer cet employé ?')">
+<input type="hidden" name="_token" value="{{ csrf_token('del' ~ e.id) }}"><button class="danger"><i class="bi bi-trash"></i></button></form></td></tr>
+{% endfor %}</tbody></table>
+{% else %}<div class="empty"><img src="{{ asset('img/ill_employee.png') }}" alt=""><p>Aucun employé pour le moment.</p></div>{% endif %}
+</section>
+{% endblock %}

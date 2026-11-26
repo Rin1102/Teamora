@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block title %}Congés et absences{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Congés et absences</h1></div><a class="btn" href="{{ path('leave_new') }}"><i class="bi bi-plus"></i> Nouvelle demande</a></header>
+<div class="pills">
+    <a class="{{ not filter ? 'on' }}" href="{{ path('leave_index') }}">Toutes ({{ counts.all }})</a>
+    <a class="{{ filter == 'En attente' ? 'on' }}" href="{{ path('leave_index', {status: 'En attente'}) }}">En attente ({{ counts['En attente'] }})</a>
+    <a class="{{ filter == 'Approuvé' ? 'on' }}" href="{{ path('leave_index', {status: 'Approuvé'}) }}">Approuvés ({{ counts['Approuvé'] }})</a>
+    <a class="{{ filter == 'Refusé' ? 'on' }}" href="{{ path('leave_index', {status: 'Refusé'}) }}">Refusés ({{ counts['Refusé'] }})</a>
+</div>
+<section class="card">
+{% if leaves %}
+<table><thead><tr><th>Employé</th><th>Type</th><th>Période</th><th>Jours</th><th>Statut</th><th>Actions</th></tr></thead><tbody>
+{% for l in leaves %}<tr>
+<td><span class="who"><img src="{{ asset('img/' ~ l.employee.avatar) }}" alt=""><b>{{ l.employee.fullName }}</b></span></td>
+<td>{{ l.type }}</td><td>{{ l.startDate|date('d/m/Y') }} – {{ l.endDate|date('d/m/Y') }}</td><td>{{ l.days }}</td>
+<td><span class="badge {{ l.status == 'Approuvé' ? 'ok' : (l.status == 'Refusé' ? 'bad' : 'warn') }}">{{ l.status }}</span></td>
+<td class="row-actions">{% if l.status == 'En attente' %}
+{% for d, ic in {approve: 'check-lg', refuse: 'x-lg'} %}<form method="post" action="{{ path('leave_decide', {id: l.id, decision: d}) }}"><input type="hidden" name="_token" value="{{ csrf_token('leave' ~ l.id) }}"><button class="{{ d == 'refuse' ? 'danger' : 'okbtn' }}"><i class="bi bi-{{ ic }}"></i></button></form>{% endfor %}{% endif %}</td></tr>
+{% endfor %}</tbody></table>
+{% else %}<div class="empty"><img src="{{ asset('img/ill_vacation.png') }}" alt=""><p>Aucune demande.</p></div>{% endif %}
+</section>
+{% endblock %}
