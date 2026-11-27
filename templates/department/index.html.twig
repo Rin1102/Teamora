@@ -4,10 +4,23 @@
 <header class="page-head"><div><h1>Départements</h1><p class="muted">{{ departments|length }} département(s)</p></div>
 <a class="btn" href="{{ path('department_new') }}"><i class="bi bi-plus"></i> Ajouter un département</a></header>
 {% if departments %}
-<div class="dept-grid">{% for d in departments %}
-<div class="card dept"><span class="emoji">{{ d.icon }}</span><b>{{ d.name }}</b><small>{{ d.employees|length }} employés</small>
-<div class="row-actions"><a href="{{ path('department_edit', {id: d.id}) }}"><i class="bi bi-pencil"></i></a>
-<form method="post" action="{{ path('department_delete', {id: d.id}) }}" onsubmit="return confirm('Supprimer ce département ?')"><input type="hidden" name="_token" value="{{ csrf_token('del' ~ d.id) }}"><button class="danger"><i class="bi bi-trash"></i></button></form></div></div>
+<div class="department-grid">{% for d in departments %}
+<article class="department-card">
+  <div class="department-cover">
+    {% if d.photo %}<img src="{{ asset('uploads/departments/' ~ d.photo) }}" alt="{{ d.name }}">
+    {% else %}<div class="department-cover-placeholder"><span><i class="bi bi-building"></i></span></div>{% endif %}
+    <span class="department-count"><i class="bi bi-people"></i> {{ d.employees|length }}</span>
+  </div>
+  <div class="department-card-body">
+    <h2>{{ d.name }}</h2>
+    {% if d.description %}<p class="department-description">{{ d.description }}</p>{% endif %}
+    <div class="department-manager"><span><i class="bi bi-person-badge"></i></span><div><small>Responsable</small><strong>{{ d.manager ? d.manager.fullName : 'Non renseigné' }}</strong></div></div>
+    <div class="department-card-actions">
+      <a class="btn ghost" href="{{ path('department_edit', {id: d.id}) }}"><i class="bi bi-pencil"></i> Modifier</a>
+      <form method="post" action="{{ path('department_delete', {id: d.id}) }}" onsubmit="return confirm('Supprimer ce département ?')"><input type="hidden" name="_token" value="{{ csrf_token('del' ~ d.id) }}"><button class="department-delete" type="submit" title="Supprimer"><i class="bi bi-trash"></i></button></form>
+    </div>
+  </div>
+</article>
 {% endfor %}</div>
 {% else %}<section class="card empty"><img src="{{ asset('img/ill_hr.png') }}" alt=""><p>Créez votre premier département.</p></section>{% endif %}
 {% endblock %}

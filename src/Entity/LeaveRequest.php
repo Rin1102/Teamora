@@ -24,6 +24,10 @@ class LeaveRequest
     public string $status = self::PENDING;
     #[ORM\Column(type: 'text', nullable: true)]
     public ?string $reason = null;
+    #[ORM\Column]
+    public bool $paid = true;
+    #[ORM\Column]
+    public float $salaryDeduction = 0;
 
     public function __construct() { $this->startDate = new \DateTime(); $this->endDate = new \DateTime('+1 day'); }
     public function getDays(): int { return $this->startDate->diff($this->endDate)->days + 1; }

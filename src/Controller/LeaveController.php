@@ -17,20 +17,15 @@ class LeaveController extends AbstractController
     {
         $entreprise = $this->getEntreprise();
         $repo = $em->getRepository(LeaveRequest::class);
-        $filter = $r->query->get('status');
         $base = $em->createQueryBuilder()
             ->select('l')->from(LeaveRequest::class, 'l')->join('l.employee', 'e')
             ->andWhere('e.entreprise = :entreprise')->setParameter('entreprise', $entreprise);
         $leaves = clone $base;
-        if ($filter) { $leaves->andWhere('l.status = :status')->setParameter('status', $filter); }
         $counts = ['all' => (int) (clone $base)->select('COUNT(l)')->getQuery()->getSingleScalarResult()];
-        foreach ([LeaveRequest::PENDING, LeaveRequest::APPROVED, LeaveRequest::REFUSED] as $s) {
-            $counts[$s] = (int) (clone $base)->select('COUNT(l)')->andWhere('l.status = :s')->setParameter('s', $s)->getQuery()->getSingleScalarResult();
-        }
         $leaves->orderBy('l.startDate', 'DESC');
         return $this->render('leave/index.html.twig', [
             'leaves' => $leaves->getQuery()->getResult(),
-            'counts' => $counts, 'filter' => $filter,
+            'count' => $counts['all'],
         ]);
     }
 
@@ -58,26 +53,26 @@ class LeaveController extends AbstractController
             if ($l->endDate < $l->startDate) {
                 $form->addError(new \Symfony\Component\Form\FormError('La date de fin précède la date de début.'));
             } else {
+                $days = $l->getDays();
+                $paidDays = min($l->employee->leaveBalance, $days);
+                $unpaidDays = max(0, $days - $paidDays);
+
+                $l->status = LeaveRequest::APPROVED;
+                $l->paid = $unpaidDays === 0;
+                $l->salaryDeduction = round(($l->employee->baseSalary / 26) * $unpaidDays, 3);
+                $l->employee->leaveBalance = max(0, $l->employee->leaveBalance - $paidDays);
+
+                $today = new \DateTime('today');
+                $l->employee->status = ($l->startDate <= $today && $l->endDate >= $today)
+                    ? 'En congé'
+                    : 'Actif';
+
                 $em->persist($l);
                 $em->flush();
                 return $this->redirectToRoute('leave_index');
             }
         }
-        return $this->render('crud/form.html.twig', ['form' => $form, 'title' => 'Nouvelle demande de congé', 'back' => 'leave_index']);
-    }
-
-    #[Route('/{id}/{decision}', name: 'leave_decide', methods: ['POST'], requirements: ['decision' => 'approve|refuse'])]
-    public function decide(Request $r, EntityManagerInterface $em, LeaveRequest $leave, string $decision): Response
-    {
-        if ($leave->employee && $leave->employee->entreprise?->getId() !== $this->getEntreprise()->getId()) {
-            throw $this->createNotFoundException();
-        }
-
-        if ($this->isCsrfTokenValid('leave'.$leave->id, $r->request->get('_token'))) {
-            $leave->status = $decision === 'approve' ? LeaveRequest::APPROVED : LeaveRequest::REFUSED;
-            $em->flush();
-        }
-        return $this->redirectToRoute('leave_index');
+        return $this->render('leave/form.html.twig', ['form' => $form, 'title' => 'Enregistrer un congé', 'back' => 'leave_index']);
     }
 
     private function getEntreprise(): Entreprise

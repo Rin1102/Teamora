@@ -7,14 +7,14 @@
     <section class="card id-card">
         <img src="{{ asset('img/' ~ e.avatar) }}" alt="">
         <h2>{{ e.fullName }}</h2><p class="muted">{{ e.position }}</p><span class="badge {{ e.status == 'Actif' ? 'ok' : 'warn' }}">{{ e.status }}</span>
-        <ul><li><i class="bi bi-envelope"></i> {{ e.email }}</li>{% if e.phone %}<li><i class="bi bi-telephone"></i> {{ e.phone }}</li>{% endif %}{% if e.city %}<li><i class="bi bi-geo-alt"></i> {{ e.city }}</li>{% endif %}</ul>
+        <ul><li><i class="bi bi-envelope"></i> {{ e.email }}</li>{% if e.phone %}<li><i class="bi bi-telephone"></i> {{ e.phone }}</li>{% endif %}{% if e.city %}<li><i class="bi bi-geo-alt"></i> {{ e.city }}</li>{% endif %}<li><i class="bi bi-calendar-check"></i> <strong>{{ e.leaveBalance }}</strong> jour(s) de congé restants</li></ul>
     </section>
     <section class="card">
         <div class="tabs"><button class="on" data-t="t1">Informations</button><button data-t="t2">Contrat</button><button data-t="t3">Congés</button><button data-t="t4">Salaires</button></div>
         <div class="pane" id="t1"><dl><dt>Matricule</dt><dd>{{ e.matricule }}</dd><dt>Département</dt><dd>{{ e.department ?? '—' }}</dd><dt>Date d'embauche</dt><dd>{{ e.hireDate|date('d/m/Y') }}</dd><dt>Type de contrat</dt><dd>{{ e.contractType }}</dd></dl></div>
-        <div class="pane" id="t2" hidden><dl><dt>Contrat</dt><dd>{{ e.contractType }}</dd><dt>Salaire de base</dt><dd>{{ e.baseSalary|number_format(2, ',', ' ') }} €</dd></dl></div>
+        <div class="pane" id="t2" hidden><dl><dt>Contrat</dt><dd>{{ e.contractType }}</dd><dt>Salaire de base</dt><dd>{{ e.baseSalary|number_format(3, ',', ' ') }} DT</dd><dt>Solde de congé</dt><dd><strong>{{ e.leaveBalance }} jour(s)</strong></dd></dl></div>
         <div class="pane" id="t3" hidden>{% for l in e.leaves %}<p>{{ l.type }} · {{ l.startDate|date('d/m/Y') }} → {{ l.endDate|date('d/m/Y') }} ({{ l.days }} j) <span class="badge {{ l.status == 'Approuvé' ? 'ok' : (l.status == 'Refusé' ? 'bad' : 'warn') }}">{{ l.status }}</span></p>{% else %}<p class="muted">Aucun congé.</p>{% endfor %}</div>
-        <div class="pane" id="t4" hidden>{% for p in e.bulletinsPaie %}<p>{{ p.period }} · {{ p.baseSalary|number_format(2, ',', ' ') }} € + prime {{ p.bonus|number_format(2, ',', ' ') }} € = <b>{{ p.total|number_format(2, ',', ' ') }} €</b></p>{% else %}<p class="muted">Aucun bulletin.</p>{% endfor %}</div>
+        <div class="pane" id="t4" hidden>{% for p in e.bulletinsPaie %}<p>{{ p.period }} · {{ p.baseSalary|number_format(3, ',', ' ') }} DT + prime {{ p.bonus|number_format(3, ',', ' ') }} DT = <b>{{ p.total|number_format(3, ',', ' ') }} DT</b></p>{% else %}<p class="muted">Aucun bulletin.</p>{% endfor %}</div>
     </section>
 </div>
 <script>document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.pane').forEach(p=>p.hidden=p.id!==b.dataset.t)})</script>

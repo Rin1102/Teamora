@@ -23,8 +23,14 @@
             <a href="{{ path('paie_index') }}" class="{{ route starts with 'paie' ? 'active' }}"><i class="bi bi-cash-coin"></i> Salaires et primes</a>
         </nav>
         <div class="me">
-            <img src="{{ asset('img/avatar_hr.png') }}" alt="">
-            <div><strong>{{ app.user.fullName }}</strong><small>Responsable RH</small></div>
+            <a href="{{ path('app_profile') }}" title="Mon profil" class="profile-link">
+                {% if app.user.profilePhoto %}
+                    <img src="{{ asset('uploads/profiles/' ~ app.user.profilePhoto) }}" alt="Photo de {{ app.user.fullName }}">
+                {% else %}
+                    <img src="{{ asset('img/avatar_hr.png') }}" alt="">
+                {% endif %}
+            </a>
+            <a href="{{ path('app_profile') }}" class="profile-name"><strong>{{ app.user.fullName }}</strong><small>Responsable RH</small></a>
             <a href="{{ path('app_logout') }}" title="Déconnexion"><i class="bi bi-box-arrow-right"></i></a>
         </div>
     </aside>

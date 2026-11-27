@@ -18,6 +18,9 @@ class BulletinPaie
     public float $baseSalary = 0;
     #[ORM\Column]
     public float $bonus = 0;
+    #[ORM\Column]
+    public float $deduction = 0;
 
-    public function getTotal(): float { return $this->baseSalary + $this->bonus; }
+    public function getNetSalary(): float { return $this->baseSalary + $this->bonus - $this->deduction; }
+    public function getTotal(): float { return $this->getNetSalary(); }
 }

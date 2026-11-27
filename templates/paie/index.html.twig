@@ -4,13 +4,13 @@
 <header class="page-head"><div><h1>Salaires et primes</h1></div><a class="btn" href="{{ path('paie_new') }}"><i class="bi bi-plus"></i> Nouveau bulletin</a></header>
 <div class="stats three">
     <div class="stat peach"><img src="{{ asset('img/icon_coin.png') }}" alt=""><div><b>{{ count }}</b><span>Bulletins de paie</span></div></div>
-    <div class="stat mint"><img src="{{ asset('img/icon_report.png') }}" alt=""><div><b>{{ mass|number_format(0, ',', ' ') }} €</b><span>Masse salariale</span></div></div>
+    <div class="stat mint"><img src="{{ asset('img/icon_report.png') }}" alt=""><div><b>{{ mass|number_format(3, ',', ' ') }} DT</b><span>Masse salariale</span></div></div>
     <div class="stat green"><img src="{{ asset('img/icon_gift.png') }}" alt=""><div><b>{{ bonuses }}</b><span>Primes ce mois</span></div></div>
 </div>
 <section class="card"><h2>Bulletins de paie récents</h2>
-{% if bulletins %}<table><thead><tr><th>Employé</th><th>Période</th><th>Base</th><th>Prime</th><th>Total</th></tr></thead><tbody>
+{% if bulletins %}<table><thead><tr><th>Employé</th><th>Période</th><th>Salaire de base</th><th>Retenue congé</th><th>Prime</th><th>Salaire net</th></tr></thead><tbody>
 {% for b in bulletins %}<tr><td><span class="who"><img src="{{ asset('img/' ~ b.employee.avatar) }}" alt=""><b>{{ b.employee.fullName }}</b></span></td>
-<td>{{ b.period }}</td><td>{{ b.baseSalary|number_format(2, ',', ' ') }} €</td><td>{{ b.bonus|number_format(2, ',', ' ') }} €</td><td><b>{{ b.total|number_format(2, ',', ' ') }} €</b></td></tr>{% endfor %}
+<td>{{ b.period }}</td><td>{{ b.baseSalary|number_format(3, ',', ' ') }} DT</td><td><span class="badge {{ b.deduction > 0 ? 'warn' : 'ok' }}">- {{ b.deduction|number_format(3, ',', ' ') }} DT</span></td><td>{{ b.bonus|number_format(3, ',', ' ') }} DT</td><td><b>{{ b.netSalary|number_format(3, ',', ' ') }} DT</b></td></tr>{% endfor %}
 </tbody></table>{% else %}<div class="empty"><img src="{{ asset('img/ill_payroll.png') }}" alt=""><p>Aucun bulletin.</p></div>{% endif %}
 </section>
 {% endblock %}

@@ -14,11 +14,16 @@ class Department
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
     public string $name = '';
-    #[ORM\Column(length: 10)]
-    public string $icon = '🏢';
+    #[ORM\Column(type: 'text', nullable: true)]
+    public ?string $description = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    public ?string $photo = null;
     #[ORM\ManyToOne(targetEntity: Entreprise::class)]
     #[ORM\JoinColumn(nullable: true)]
     public ?Entreprise $entreprise = null;
+    #[ORM\ManyToOne(targetEntity: Employee::class)]
+    #[ORM\JoinColumn(name: 'manager_id', referencedColumnName: 'id', nullable: true)]
+    public ?Employee $manager = null;
     #[ORM\OneToMany(mappedBy: 'department', targetEntity: Employee::class)]
     public Collection $employees;
 

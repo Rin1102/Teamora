@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Mon profil</h1>
+        <p class="muted">Gérez vos informations personnelles et celles de l’entreprise.</p>
+    </div>
+</div>
+
+<div class="profile-page">
+    {{ form_start(form, {attr: {class: 'rh-profile-form'}}) }}
+    {{ form_errors(form) }}
+
+    <section class="profile-card profile-identity">
+        <div class="profile-avatar">
+            {% if user.profilePhoto %}
+                <img src="{{ asset('uploads/profiles/' ~ user.profilePhoto) }}" alt="Photo de {{ user.fullName }}">
+            {% else %}
+                <img src="{{ asset('img/avatar_hr.png') }}" alt="Photo de profil">
+            {% endif %}
+
+            {{ form_widget(form.photo, {attr: {class: 'profile-photo-input'}}) }}
+            <label class="profile-photo-overlay" for="{{ form.photo.vars.id }}">
+                <i class="bi bi-camera-fill"></i>
+                <span>Changer la photo</span>
+            </label>
+        </div>
+        <button class="profile-photo-save" name="save_photo" value="1" type="submit" hidden>
+            <i class="bi bi-check-lg"></i>
+            <span>Enregistrer la photo</span>
+        </button>
+        <div class="form-error-message">{{ form_errors(form.photo) }}</div>
+        <small class="form-help" id="photo-name"></small>
+    </section>
+
+    <section class="profile-card">
+        <h2><i class="bi bi-person-badge"></i> Informations personnelles</h2>
+        <div class="profile-form-grid">
+            {{ form_row(form.fullName) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.password.first) }}
+            {{ form_row(form.password.second) }}
+        </div>
+        {{ form_errors(form.password) }}
+    </section>
+
+    <section class="profile-card">
+        <h2><i class="bi bi-building"></i> Informations de l’entreprise</h2>
+        <div class="profile-form-grid">
+            {{ form_row(form.companyName) }}
+            {{ form_row(form.companyCity) }}
+            {{ form_row(form.companyAddress) }}
+            {{ form_row(form.companyPhone) }}
+            {{ form_row(form.companyEmail) }}
+        </div>
+    </section>
+
+    {{ form_rest(form) }}
+    <div class="profile-actions">
+        <button class="btn" type="submit"><i class="bi bi-check2-circle"></i> Enregistrer les modifications</button>
+    </div>
+    {{ form_end(form) }}
+</div>
+
+<script>
+    (function () {
+        const input = document.querySelector('.profile-photo-input');
+        const img = document.querySelector('.profile-avatar img');
+        const label = document.getElementById('photo-name');
+        const saveButton = document.querySelector('.profile-photo-save');
+        if (!input || !saveButton) return;
+        input.addEventListener('change', function () {
+            const file = input.files[0];
+            if (!file) {
+                saveButton.hidden = true;
+                return;
+            }
+            img.src = URL.createObjectURL(file);
+            const mb = (file.size / 1048576).toFixed(1);
+            label.textContent = file.name + ' (' + mb + ' Mo)';
+            saveButton.hidden = false;
+        });
+    })();
+</script>
+{% endblock %}

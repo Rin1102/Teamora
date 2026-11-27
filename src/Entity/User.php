@@ -19,6 +19,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = ['ROLE_HR'];
     #[ORM\Column]
     private string $password = '';
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $profilePhoto = null;
     #[ORM\OneToOne(inversedBy: 'rh', targetEntity: Entreprise::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'entreprise_id', referencedColumnName: 'id', nullable: true, unique: true)]
     private ?Entreprise $entreprise = null;
@@ -31,6 +33,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array { return array_unique([...$this->roles, 'ROLE_HR']); }
     public function getPassword(): string { return $this->password; }
     public function setPassword(string $p): static { $this->password = $p; return $this; }
+    public function getProfilePhoto(): ?string { return $this->profilePhoto; }
+    public function setProfilePhoto(?string $profilePhoto): static { $this->profilePhoto = $profilePhoto; return $this; }
     public function getUserIdentifier(): string { return $this->email; }
     public function getEntreprise(): ?Entreprise { return $this->entreprise; }
     public function setEntreprise(?Entreprise $entreprise): static { $this->entreprise = $entreprise; return $this; }

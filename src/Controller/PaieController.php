@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\{BulletinPaie, Employee, Entreprise, User};
+use App\Entity\{BulletinPaie, Employee, Entreprise, LeaveRequest, User};
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,14 +45,39 @@ class PaieController extends AbstractController
                 },
             ])
             ->add('period', TextType::class, ['label' => 'Période (AAAA-MM)', 'attr' => ['pattern' => '\d{4}-\d{2}']])
-            ->add('baseSalary', NumberType::class, ['label' => 'Salaire de base (€)', 'help' => "Laissez 0 pour reprendre le salaire de l'employé"])
-            ->add('bonus', NumberType::class, ['label' => 'Prime (€)'])
+            ->add('bonus', NumberType::class, ['label' => 'Prime (DT)', 'required' => false])
             ->getForm()->handleRequest($r);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($bulletin->baseSalary == 0) { $bulletin->baseSalary = $bulletin->employee->baseSalary; }
-            $em->persist($bulletin);
-            $em->flush();
-            return $this->redirectToRoute('paie_index');
+            $existing = $em->getRepository(BulletinPaie::class)->findOneBy([
+                'employee' => $bulletin->employee,
+                'period' => $bulletin->period,
+            ]);
+            if ($existing) {
+                $this->addFlash('error', 'Un bulletin existe déjà pour cet employé sur cette période.');
+            } else {
+                $bulletin->baseSalary = $bulletin->employee->baseSalary;
+                $bulletin->bonus = (float) ($bulletin->bonus ?? 0);
+
+                $start = \DateTime::createFromFormat('Y-m-d', $bulletin->period . '-01');
+                $end = (clone $start)->modify('last day of this month')->setTime(23, 59, 59);
+
+                $deduction = (float) $em->createQueryBuilder()
+                    ->select('COALESCE(SUM(l.salaryDeduction), 0)')
+                    ->from(LeaveRequest::class, 'l')
+                    ->andWhere('l.employee = :employee')
+                    ->andWhere('l.startDate <= :end AND l.endDate >= :start')
+                    ->setParameter('employee', $bulletin->employee)
+                    ->setParameter('start', $start)
+                    ->setParameter('end', $end)
+                    ->getQuery()
+                    ->getSingleScalarResult();
+
+                $bulletin->deduction = $deduction;
+                $em->persist($bulletin);
+                $em->flush();
+                $this->addFlash('success', 'Bulletin calculé avec la retenue du mois.');
+                return $this->redirectToRoute('paie_index');
+            }
         }
         return $this->render('crud/form.html.twig', ['form' => $form, 'title' => 'Nouveau bulletin / prime', 'back' => 'paie_index']);
     }

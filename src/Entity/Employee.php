@@ -41,6 +41,8 @@ class Employee
     public string $status = 'Actif';
     #[ORM\Column]
     public float $baseSalary = 0;
+    #[ORM\Column]
+    public int $leaveBalance = 30;
     #[ORM\ManyToOne(targetEntity: Entreprise::class)]
     #[ORM\JoinColumn(nullable: true)]
     public ?Entreprise $entreprise = null;

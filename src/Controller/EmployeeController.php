@@ -5,7 +5,7 @@ use App\Entity\{Department, Employee, Entreprise, User};
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, DateType, EmailType, NumberType, TextType};
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, DateType, EmailType, IntegerType, NumberType, TextType};
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Attribute\Route;
@@ -90,8 +90,8 @@ class EmployeeController extends AbstractController
             ])
             ->add('hireDate', DateType::class, ['label' => "Date d'embauche", 'widget' => 'single_text', 'input' => 'datetime'])
             ->add('contractType', ChoiceType::class, ['label' => 'Type de contrat', 'choices' => array_combine(['CDI', 'CDD', 'Stage', 'Freelance'], ['CDI', 'CDD', 'Stage', 'Freelance'])])
-            ->add('status', ChoiceType::class, ['label' => 'Statut', 'choices' => ['Actif' => 'Actif', 'En congé' => 'En congé']])
-            ->add('baseSalary', NumberType::class, ['label' => 'Salaire de base (€)'])
+            ->add('baseSalary', NumberType::class, ['label' => 'Salaire de base (DT)'])
+            ->add('leaveBalance', IntegerType::class, ['label' => 'Solde de congé (jours)', 'attr' => ['min' => 0]])
             ->getForm()->handleRequest($r);
         return $this->persist($form, $em, $e, $title, 'employee_index');
     }

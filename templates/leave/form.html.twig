@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>{{ title }}</h1><p class="muted">Demande de congé et gestion du solde</p></div></header>
+<section class="card leave-form-card">
+{{ form_start(form) }}
+  {{ form_errors(form) }}
+  <h2><i class="bi bi-person-badge"></i> Employé et période</h2>
+  <div class="leave-form-grid">
+    {{ form_row(form.employee) }}
+    {{ form_row(form.type) }}
+    {{ form_row(form.startDate) }}
+    {{ form_row(form.endDate) }}
+  </div>
+  <h2><i class="bi bi-cash-stack"></i> Solde du congé</h2>
+  <p class="leave-salary-note">Le solde disponible est déduit automatiquement. Les jours dépassant le solde entraînent une retenue sur salaire.</p>
+  <h2><i class="bi bi-chat-text"></i> Motif</h2>
+  {{ form_row(form.reason) }}
+  <div class="actions">
+    <a class="btn ghost" href="{{ path(back) }}">Annuler</a>
+    <button class="btn" type="submit"><i class="bi bi-check-lg"></i> Enregistrer le congé</button>
+  </div>
+{{ form_end(form) }}
+</section>
+{% endblock %}

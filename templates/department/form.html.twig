@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>{{ title }}</h1><p class="muted">Informations de l’organisation</p></div></header>
+<section class="department-form-card">
+  {{ form_start(form) }}
+  <div class="department-form-layout">
+    <aside class="department-photo-panel">
+      {% if department.photo %}
+        <img id="department-preview" src="{{ asset('uploads/departments/' ~ department.photo) }}" alt="{{ department.name }}">
+      {% else %}
+        <div id="department-preview" class="department-photo-placeholder"><i class="bi bi-building"></i><span>Aucune photo</span></div>
+      {% endif %}
+      {{ form_row(form.photo) }}
+    </aside>
+    <div class="department-fields">
+      <h2>Informations générales</h2>
+      <div class="department-form-grid">
+        {{ form_row(form.name) }}
+      </div>
+      {{ form_row(form.manager) }}
+      {{ form_row(form.description) }}
+      <div class="department-actions">
+        <a class="btn ghost" href="{{ path(back) }}">Annuler</a>
+        <button class="btn" type="submit"><i class="bi bi-check-lg"></i> Enregistrer le département</button>
+      </div>
+    </div>
+  </div>
+  {{ form_end(form) }}
+</section>
+<script>
+const photoInput=document.querySelector('[name*="[photo]"]');
+if(photoInput){photoInput.addEventListener('change',()=>{const file=photoInput.files?.[0];if(!file)return;const preview=document.getElementById('department-preview');const url=URL.createObjectURL(file);if(preview.tagName==='IMG'){preview.src=url}else{const img=document.createElement('img');img.id='department-preview';img.src=url;img.alt='Aperçu';preview.replaceWith(img)}})}
+</script>
+{% endblock %}
